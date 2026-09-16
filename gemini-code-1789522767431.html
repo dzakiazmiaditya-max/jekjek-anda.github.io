@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Simulasi Trip Puncak Lengkap</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 15px;
+      color: #1e293b;
+    }
+    .card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #0f172a;
+      margin-top: 0;
+      font-size: 22px;
+    }
+    p.subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      margin-top: -8px;
+      margin-bottom: 20px;
+    }
+    .summary-box {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      padding: 20px;
+      border-radius: 14px;
+      text-align: center;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+    .summary-box .title { font-size: 13px; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; }
+    .summary-box .price-per-person { font-size: 34px; font-weight: 800; margin: 4px 0; }
+    .summary-box .total-price { font-size: 14px; opacity: 0.95; }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2563eb;
+      margin: 20px 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 4px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 13px;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+    .subtext {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 6px;
+      font-weight: normal;
+    }
+    .val-badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #cbd5e1;
+      outline: none;
+      accent-color: #2563eb;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    input[type="number"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th {
+      background-color: #f8fafc;
+      color: #475569;
+      font-weight: 700;
+    }
+    td.num {
+      text-align: right;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🏍️ Kalkulator & Simulasi Trip Puncak</h2>
+  <p class="subtitle">Karawaci (Binong) ➔ Puncak, Bogor</p>
+
+  <!-- Total Patungan -->
+  <div class="summary-box">
+    <div class="title">Estimasi Patungan Per Orang</div>
+    <div class="price-per-person" id="perPersonDisplay">Rp0</div>
+    <div class="total-price" id="totalDisplay">Total Rombongan: Rp0</div>
+  </div>
+
+  <!-- Section 1: Peserta & Durasi -->
+  <div class="section-title">1. Durasi & Peserta</div>
+  <div class="grid-2">
+    <div class="form-group">
+      <label for="jmlHari">Jumlah Hari Trip</label>
+      <span class="subtext" id="lblMalamInfo">2 Hari / 1 Malam</span>
+      <input type="number" id="jmlHari" value="2" min="1" max="7" oninput="calculate()">
+    </div>
+    <div class="form-group">
+      <label for="jmlOrang">Jumlah Orang</label>
+      <span class="subtext" id="lblMotorInfo">6 Motor (2 orang/motor)</span>
+      <input type="number" id="jmlOrang" value="12" min="1" max="50" oninput="calculate()">
+    </div>
+  </div>
+
+  <!-- Section 2: Villa & Transport -->
+  <div class="section-title">2. Akomodasi & Bensin</div>
+  <div class="form-group">
+    <label>Sewa Villa / Malam <span class="val-badge" id="lblVilla">Rp3.600.000</span></label>
+    <span class="subtext">Villa fasilitas lengkap (Private Pool, BBQ, Karaoke, High Season Des).</span>
+    <input type="range" id="villa" min="1500000" max="7000000" step="100000" value="3600000" oninput="calculate()">
+  </div>
+  <div class="form-group">
+    <label>Bensin Pertamax / Motor <span class="val-badge" id="lblBensin">Rp65.000</span></label>
+    <span class="subtext">Estimasi ±210 km PP Binong - Puncak (kapasitas ±5,5 Liter Pertamax).</span>
+    <input type="range" id="bensin" min="30000" max="120000" step="5000" value="65000" oninput="calculate()">
+  </div>
+
+  <!-- Section 3: Konsumsi & Logistik -->
+  <div class="section-title">3. Konsumsi & Logistik</div>
+  <div class="form-group">
+    <label>Belanja BBQ & Masak / Hari <span class="val-badge" id="lblBbq">Rp380.000</span></label>
+    <span class="subtext">Bahan mentah dari Tangerang (Daging/Ayam BBQ, sosis, beras, bumbu).</span>
+    <input type="range" id="bbq" min="150000" max="800000" step="10000" value="380000" oninput="calculate()">
+  </div>
+  <div class="form-group">
+    <label>Logistik & Perlengkapan Total <span class="val-badge" id="lblLogistik">Rp200.000</span></label>
+    <span class="subtext">Galon air, kopi saset, arang BBQ, mi instan, snack, & barang habis pakai.</span>
+    <input type="range" id="logistik" min="100000" max="600000" step="10000" value="200000" oninput="calculate()">
+  </div>
+
+  <!-- Section 4: Wisata & Kas -->
+  <div class="section-title">4. Wisata & Dana Darurat (Per Orang)</div>
+  <div class="grid-2">
+    <div class="form-group">
+      <label>Wisata & Parkir / Orang</label>
+      <span class="subtext">HTM Kebun Teh / Curug + Parkir</span>
+      <input type="number" id="wisata" value="22500" step="2500" oninput="calculate()">
+    </div>
+    <div class="form-group">
+      <label>Kas Darurat / Orang</label>
+      <span class="subtext">Tambal ban / Biaya mendadak</span>
+      <input type="number" id="darurat" value="15000" step="2500" oninput="calculate()">
+    </div>
+  </div>
+
+  <!-- Section 5: Rincian Lengkap -->
+  <div class="section-title">5. Rincian Pengeluaran Rombongan</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Komponen Biaya</th>
+        <th style="text-align: right;">Total Rombongan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sewa Villa (<span id="tbMalam">1</span> Malam)</td>
+        <td class="num" id="tbTotalVilla">Rp0</td>
+      </tr>
+      <tr>
+        <td>Bensin Pertamax (<span id="tbMotor">6</span> Motor)</td>
+        <td class="num" id="tbTotalBensin">Rp0</td>
+      </tr>
+      <tr>
+        <td>Bahan Masak & BBQ (<span id="tbHari">2</span> Hari)</td>
+        <td class="num" id="tbTotalBbq">Rp0</td>
+      </tr>
+      <tr>
+        <td>Logistik & Peralatan</td>
+        <td class="num" id="tbTotalLogistik">Rp0</td>
+      </tr>
+      <tr>
+        <td>Wisata & Parkir (<span id="tbOrang1">12</span> Orang)</td>
+        <td class="num" id="tbTotalWisata">Rp0</td>
+      </tr>
+      <tr>
+        <td>Kas & Dana Darurat (<span id="tbOrang2">12</span> Orang)</td>
+        <td class="num" id="tbTotalDarurat">Rp0</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function formatRupiah(angka) {
+    return 'Rp' + angka.toLocaleString('id-ID');
+  }
+
+  function calculate() {
+    // Input Dasar
+    let hari = parseInt(document.getElementById('jmlHari').value) || 1;
+    if (hari < 1) hari = 1;
+    let malam = hari > 1 ? hari - 1 : 1; // Minimal hitung 1 malam jika 1 hari trip villa
+
+    let orang = parseInt(document.getElementById('jmlOrang').value) || 1;
+    if (orang < 1) orang = 1;
+
+    let motor = Math.ceil(orang / 2);
+
+    // Update Subtext Informasi
+    document.getElementById('lblMalamInfo').innerText = hari + ' Hari / ' + (hari - 1) + ' Malam';
+    document.getElementById('lblMotorInfo').innerText = motor + ' Motor (2 orang/motor)';
+
+    // Ambil Nilai Form & Slider
+    let villaPerMalam = parseInt(document.getElementById('villa').value);
+    let bensinPerMotor = parseInt(document.getElementById('bensin').value);
+    let bbqPerHari = parseInt(document.getElementById('bbq').value);
+    let logistikTotal = parseInt(document.getElementById('logistik').value);
+    let wisataPerOrang = parseInt(document.getElementById('wisata').value) || 0;
+    let daruratPerOrang = parseInt(document.getElementById('darurat').value) || 0;
+
+    // Update Badge Slider
+    document.getElementById('lblVilla').innerText = formatRupiah(villaPerMalam);
+    document.getElementById('lblBensin').innerText = formatRupiah(bensinPerMotor);
+    document.getElementById('lblBbq').innerText = formatRupiah(bbqPerHari);
+    document.getElementById('lblLogistik').innerText = formatRupiah(logistikTotal);
+
+    // Kalkulasi Total per Komponen
+    let totalVilla = villaPerMalam * (hari > 1 ? (hari - 1) : 1);
+    let totalBensin = bensinPerMotor * motor;
+    let totalBbq = bbqPerHari * hari;
+    let totalWisata = wisataPerOrang * orang;
+    let totalDarurat = daruratPerOrang * orang;
+
+    let grandTotal = totalVilla + totalBensin + totalBbq + logistikTotal + totalWisata + totalDarurat;
+    let perOrang = Math.ceil(grandTotal / orang);
+
+    // Update Banner Utama
+    document.getElementById('perPersonDisplay').innerText = formatRupiah(perOrang);
+    document.getElementById('totalDisplay').innerText = 'Total Rombongan: ' + formatRupiah(grandTotal) + ' (' + orang + ' Orang / ' + hari + ' Hari)';
+
+    // Update Tabel Rincian
+    document.getElementById('tbMalam').innerText = (hari - 1) < 1 ? 1 : (hari - 1);
+    document.getElementById('tbMotor').innerText = motor;
+    document.getElementById('tbHari').innerText = hari;
+    document.getElementById('tbOrang1').innerText = orang;
+    document.getElementById('tbOrang2').innerText = orang;
+
+    document.getElementById('tbTotalVilla').innerText = formatRupiah(totalVilla);
+    document.getElementById('tbTotalBensin').innerText = formatRupiah(totalBensin);
+    document.getElementById('tbTotalBbq').innerText = formatRupiah(totalBbq);
+    document.getElementById('tbTotalLogistik').innerText = formatRupiah(logistikTotal);
+    document.getElementById('tbTotalWisata').innerText = formatRupiah(totalWisata);
+    document.getElementById('tbTotalDarurat').innerText = formatRupiah(totalDarurat);
+  }
+
+  // Jalankan kalkulasi saat halaman selesai dimuat
+  calculate();
+</script>
+
+</body>
+</html>
